@@ -8,7 +8,7 @@ import { loadDockerSecrets } from './common/util/secrets.util';
 loadDockerSecrets();
 
 const getSwaggerServerUrl = (): string => {
-  const port = process.env.PORT || '3000';
+  const port = process.env.PORT || '3001';
   if (process.env.NODE_ENV === 'production') {
     return process.env.SWAGGER_SERVER_URL + '/';
   }
@@ -56,7 +56,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
 
-  const port = Number(process.env.PORT) || 3000;
+  const port = Number(process.env.PORT) || 3001;
   await app.listen(port);
 }
 
