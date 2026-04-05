@@ -153,11 +153,10 @@ All environment variables are configured as stack environment variables in Dokpl
 
 `.github/workflows/deploy-prod.yml` is a manually triggered (`workflow_dispatch`) pipeline:
 
-1. **Test** — runs `npm test`
-2. **Build & Push** — builds the Docker image and pushes two tags to Docker Hub:
+1. **Build & Push** — builds the Docker image and pushes two tags to Docker Hub:
    - `<IMAGE_NAME>:prod` — mutable, always latest production
    - `<IMAGE_NAME>:sha-<git-sha>` — immutable, for rollback
-3. **Deploy** — triggers the Dokploy deployment webhook
+2. **Deploy** — triggers the Dokploy deployment webhook
 
 #### Required GitHub Secrets
 
@@ -189,7 +188,4 @@ All environment variables are configured as stack environment variables in Dokpl
 
 ## Testing
 
-```bash
-npm run test
-npm run test:cov
-```
+No tests yet. The `npm test` script is present in `package.json` but no spec files exist.

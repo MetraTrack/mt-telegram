@@ -128,9 +128,8 @@ Required stack variables: see [Secrets](#secrets) section in README.
 ### GitHub Actions
 
 `.github/workflows/deploy-prod.yml` — manual workflow (`workflow_dispatch`) that:
-1. Runs `npm test`
-2. Builds and pushes `<IMAGE_NAME>:prod` and `<IMAGE_NAME>:sha-<git-sha>` to Docker Hub
-3. Triggers Dokploy deployment webhook (`DOKPLOY_BOT_WEBHOOK_URL`)
+1. Builds and pushes `<IMAGE_NAME>:prod` and `<IMAGE_NAME>:sha-<git-sha>` to Docker Hub
+2. Triggers Dokploy deployment webhook (`DOKPLOY_BOT_WEBHOOK_URL`)
 
 No migration step — this service has no database.
 
@@ -145,10 +144,5 @@ The internal callback endpoint is protected by `BackendApiKeyGuard` (`BACKEND_AP
 
 ## Testing
 
-```bash
-npm run test
-npm run test:cov
-```
-
-No database or migrations to worry about — unit test services and message formatters directly.
-Integration tests can stub `BackendApiService` and `RedisService`.
+No tests yet. When adding them, unit test services and message formatters directly.
+Integration tests should stub `BackendApiService` and `RedisService`.
