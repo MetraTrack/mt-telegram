@@ -31,7 +31,12 @@ export class BotService {
     const from = ctx.from;
     if (!from) return;
 
-    const tgUser: TelegramUserDto = {
+    await this.ensureRegistered(from);
+    await ctx.reply(formatWelcome(from.first_name ?? 'there'));
+  }
+
+  private buildTgUser(from: NonNullable<Context['from']>): TelegramUserDto {
+    return {
       tgId: String(from.id),
       tgUsername: from.username ?? null,
       tgFirstName: from.first_name ?? null,
@@ -40,14 +45,14 @@ export class BotService {
       tgIsPremium: (from as any).is_premium ?? false,
       isBot: from.is_bot ?? false,
     };
+  }
 
+  private async ensureRegistered(from: NonNullable<Context['from']>): Promise<void> {
     try {
-      await this.backendApi.registerUser(tgUser);
+      await this.backendApi.registerUser(this.buildTgUser(from));
     } catch (error) {
-      this.logger.error('Failed to register user', error, { tgId: tgUser.tgId });
+      this.logger.error('ensureRegistered failed', error, { tgId: String(from.id) });
     }
-
-    await ctx.reply(formatWelcome(from.first_name ?? 'there'));
   }
 
   async handlePhoto(ctx: Context): Promise<void> {
@@ -57,6 +62,7 @@ export class BotService {
 
     const tgId = String(from.id);
 
+    await this.ensureRegistered(from);
     await ctx.reply('📸 Analyzing your meal...');
 
     try {
