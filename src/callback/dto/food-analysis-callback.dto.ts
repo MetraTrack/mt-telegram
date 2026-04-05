@@ -1,5 +1,4 @@
-import { IsString, IsIn, IsOptional, ValidateNested } from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsString, IsIn, IsOptional, IsObject } from 'class-validator';
 import { FoodEntryResponseDto } from '../../backend-api/dto/food-entry-response.dto';
 
 export class FoodAnalysisCallbackDto {
@@ -7,8 +6,7 @@ export class FoodAnalysisCallbackDto {
   status: 'food' | 'not_food';
 
   @IsOptional()
-  @ValidateNested()
-  @Type(() => FoodEntryResponseDto)
+  @IsObject()
   entry: FoodEntryResponseDto | null;
 
   @IsString()

@@ -135,6 +135,58 @@ The bot deduplicates deliveries using Redis keys `analysis:sent:{entryId}` (TTL 
 
 ---
 
+## Deployment
+
+### Docker Image
+
+```bash
+docker build -t <IMAGE_NAME>:prod .
+docker push <IMAGE_NAME>:prod
+```
+
+### Docker Swarm / Dokploy
+
+The stack file `docker-stack.yml` deploys the bot service on a Docker Swarm managed by Dokploy.
+All environment variables are configured as stack environment variables in Dokploy.
+
+### GitHub Actions (CI/CD)
+
+`.github/workflows/deploy-prod.yml` is a manually triggered (`workflow_dispatch`) pipeline:
+
+1. **Test** — runs `npm test`
+2. **Build & Push** — builds the Docker image and pushes two tags to Docker Hub:
+   - `<IMAGE_NAME>:prod` — mutable, always latest production
+   - `<IMAGE_NAME>:sha-<git-sha>` — immutable, for rollback
+3. **Deploy** — triggers the Dokploy deployment webhook
+
+#### Required GitHub Secrets
+
+| Secret | Description |
+|---|---|
+| `DOCKERHUB_USERNAME` | Docker Hub account username |
+| `DOCKERHUB_TOKEN` | Docker Hub access token |
+| `IMAGE_NAME` | Full image name, e.g. `myuser/mt-bot` |
+| `DOKPLOY_BOT_WEBHOOK_URL` | Dokploy deploy webhook URL for the bot service |
+
+#### Required Dokploy Stack Variables
+
+| Variable | Description |
+|---|---|
+| `BOT_IMAGE` | Docker image to deploy, e.g. `myuser/mt-bot:prod` |
+| `APP_NAME` | Application name (e.g. `mt-bot`) |
+| `PORT` | HTTP port (default `3001`) |
+| `TELEGRAM_BOT_TOKEN` | Bot token from @BotFather |
+| `BACKEND_HOST` | Base URL of mt-backend (e.g. `http://backend:3000`) |
+| `BACKEND_API_KEY` | Shared secret for mt-backend requests and inbound callbacks |
+| `REDIS_HOST` | Redis hostname |
+| `REDIS_PORT` | Redis port (default `6379`) |
+| `REDIS_PASSWORD` | Redis password (if required) |
+| `HTTP_TIMEOUT_MS` | HTTP client timeout in ms (default `10000`) |
+| `HTTP_RETRIES` | HTTP client retry count (default `3`) |
+| `HTTP_RETRY_DELAY_MS` | HTTP client retry delay in ms (default `1000`) |
+
+---
+
 ## Testing
 
 ```bash

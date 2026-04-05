@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  # ─────────────────────────────────────────────────────────────────────────────
+  # MetraTrack Telegram Bot — NestJS + nestjs-telegraf
+  # ─────────────────────────────────────────────────────────────────────────────
+  bot:
+    image: ${BOT_IMAGE}
+    environment:
+      - NODE_ENV=production
+      - APP_NAME=${APP_NAME}
+      - PORT=${PORT}
+      # Telegram
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      # MetraTrack Backend
+      - BACKEND_HOST=${BACKEND_HOST}
+      - BACKEND_API_KEY=${BACKEND_API_KEY}
+      # Redis
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      # HTTP client
+      - HTTP_TIMEOUT_MS=${HTTP_TIMEOUT_MS}
+      - HTTP_RETRIES=${HTTP_RETRIES}
+      - HTTP_RETRY_DELAY_MS=${HTTP_RETRY_DELAY_MS}
+    networks:
+      dokploy-network:
+        aliases:
+          - metratrack-telegram-bot
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+
+networks:
+  dokploy-network:
+    external: true
