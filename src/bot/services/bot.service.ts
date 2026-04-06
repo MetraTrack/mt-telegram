@@ -10,7 +10,6 @@ import {
   formatFoodEntryList,
   formatDailySummary,
   formatReview,
-  formatNotFood,
   formatError,
 } from '../messages/food-entry.message';
 import {
@@ -74,17 +73,7 @@ export class BotService {
       const buffer = Buffer.from(arrayBuffer);
 
       const caption = message.caption ?? null;
-      const result = await this.backendApi.analyzeFood(tgId, buffer, fileId, 'image/jpeg', caption);
-
-      if (result.status === 'food' && result.entry) {
-        const entryId = result.entry.id;
-        const text = formatFoodEntry(result.entry);
-        const keyboard = confirmEntryKeyboard(entryId);
-        await ctx.reply(text, { reply_markup: keyboard });
-        await this.redis.set(`analysis:sent:${entryId}`, '1', 60);
-      } else {
-        await ctx.reply(formatNotFood());
-      }
+      await this.backendApi.analyzeFood(tgId, buffer, fileId, 'image/jpeg', caption);
     } catch (error) {
       this.logger.error('handlePhoto failed', error, { tgId });
       await ctx.reply(formatError());
