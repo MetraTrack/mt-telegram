@@ -58,7 +58,10 @@ export class HttpService {
         };
 
         if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          const errorMessage = (responseData as any)?.message ?? response.statusText;
+          const errorCode = (responseData as any)?.errorCode;
+          const detail = errorCode ? ` [${errorCode}]` : '';
+          throw new Error(`HTTP ${response.status}${detail}: ${errorMessage}`);
         }
 
         if (attempt > 0) {

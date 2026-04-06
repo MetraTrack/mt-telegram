@@ -102,7 +102,11 @@ export class BackendApiService {
       clearTimeout(timeoutId);
 
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        const body = await response.json().catch(() => ({}));
+        const errorMessage = (body as any)?.message ?? response.statusText;
+        const errorCode = (body as any)?.errorCode;
+        const detail = errorCode ? ` [${errorCode}]` : '';
+        throw new Error(`HTTP ${response.status}${detail}: ${errorMessage}`);
       }
 
       return (await response.json()) as FoodAnalysisResponseDto;
