@@ -4,6 +4,7 @@ import { BackendApiService } from '../../backend-api/services/backend-api.servic
 import { RedisService } from '../../common/redis/redis.service';
 import { LoggingService } from '../../common/logging/logging.service';
 import { TelegramUserDto } from '../../backend-api/dto/telegram-user.dto';
+import { formatTime } from '../../common/util/date.util';
 import { formatWelcome } from '../messages/welcome.message';
 import {
   formatFoodEntry,
@@ -117,7 +118,7 @@ export class BotService {
       const dateFrom = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
       const dateTo = dateFrom + 86400000 - 1;
 
-      const result = await this.backendApi.getFoodEntries(tgId, { dateFrom, dateTo, page: 1, limit: 20 });
+      const result = await this.backendApi.getFoodEntries(tgId, { dateFrom, dateTo, confirmedOnly: true, page: 1, limit: 20 });
       const text = formatDailySummary(result.data);
       await ctx.reply(text);
     } catch (error) {
@@ -167,9 +168,7 @@ export class BotService {
 
     try {
       const entry = await this.backendApi.confirmFoodEntry(tgId, entryId);
-      const time = entry.eatenAt
-        ? new Date(entry.eatenAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
-        : new Date(entry.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+      const time = formatTime(entry.eatenAt ?? entry.createdAt);
       await (ctx as any).editMessageReplyMarkup({ inline_keyboard: [] });
       await (ctx as any).editMessageText(
         `${formatFoodEntry(entry)}\n\n✅ Confirmed at ${time}`,

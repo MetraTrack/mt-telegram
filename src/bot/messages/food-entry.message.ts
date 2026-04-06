@@ -1,6 +1,7 @@
 import { FoodEntryResponseDto } from '../../backend-api/dto/food-entry-response.dto';
 import { FoodReviewResponseDto } from '../../backend-api/dto/food-review-response.dto';
 import { PaginationMeta } from '../../backend-api/dto/paginated-food-entries.dto';
+import { formatDate, formatTime, formatDateTime } from '../../common/util/date.util';
 
 export function formatFoodEntry(entry: FoodEntryResponseDto): string {
   const lines: string[] = [`🍽 ${entry.mealSummary}`];
@@ -36,10 +37,8 @@ export function formatFoodEntryList(entries: FoodEntryResponseDto[], meta: Pagin
 
   const list = entries
     .map((e, i) => {
-      const date = e.eatenAt
-        ? new Date(e.eatenAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-        : '—';
-      return `${i + 1}. ${date} — ${e.mealSummary} (${e.caloriesKcal} kcal)`;
+      const datetime = e.eatenAt ? formatDateTime(e.eatenAt) : '—';
+      return `${i + 1}. ${datetime} — ${e.mealSummary} (${e.caloriesKcal} kcal)`;
     })
     .join('\n');
 
@@ -74,9 +73,7 @@ export function formatDailySummary(entries: FoodEntryResponseDto[]): string {
 
   const list = entries
     .map((e, i) => {
-      const time = e.eatenAt
-        ? new Date(e.eatenAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
-        : '—';
+      const time = e.eatenAt ? formatTime(e.eatenAt) : '—';
       return `${i + 1}. ${time} — ${e.mealSummary} (${e.caloriesKcal} kcal)`;
     })
     .join('\n');
