@@ -81,6 +81,25 @@ export class BotService {
     }
   }
 
+  async handleText(ctx: Context): Promise<void> {
+    const from = ctx.from;
+    const message = (ctx as any).message;
+    if (!from || !message?.text) return;
+
+    const tgId = String(from.id);
+    const text: string = message.text;
+
+    await this.ensureRegistered(from);
+    await ctx.reply('🔍 Analyzing your meal...');
+
+    try {
+      await this.backendApi.analyzeTextFood(tgId, text);
+    } catch (error) {
+      this.logger.error('handleText failed', error, { tgId });
+      await ctx.reply(formatError());
+    }
+  }
+
   async handleHistory(ctx: Context, page = 1): Promise<void> {
     const tgId = String(ctx.from?.id);
 

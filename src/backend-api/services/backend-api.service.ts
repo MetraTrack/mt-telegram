@@ -74,6 +74,23 @@ export class BackendApiService {
     return response.data;
   }
 
+  async analyzeTextFood(tgId: string, textDescription: string): Promise<FoodAnalysisResponseDto> {
+    try {
+      const response = await this.http.request<FoodAnalysisResponseDto>({
+        method: 'POST',
+        url: `${this.baseUrl}/food-analysis/analyze-text?tgId=${tgId}`,
+        body: { textDescription },
+        headers: this.apiHeaders,
+        timeout: 30000,
+        retries: 0,
+      });
+      return response.data;
+    } catch (error) {
+      this.logger.error('analyzeTextFood failed', error);
+      throw error;
+    }
+  }
+
   async analyzeFood(
     tgId: string,
     photoBuffer: Buffer,

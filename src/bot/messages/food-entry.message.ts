@@ -93,7 +93,7 @@ export function formatReview(review: FoodReviewResponseDto): string {
 }
 
 export function formatNotFood(): string {
-  return `🚫 That doesn't look like food. Try sending a clearer photo of a meal.`;
+  return `🚫 That doesn't look like food. Try sending a photo or describing a meal in more detail.`;
 }
 
 export function formatError(): string {

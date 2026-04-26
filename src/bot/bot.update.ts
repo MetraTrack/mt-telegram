@@ -16,6 +16,13 @@ export class BotUpdate {
     await this.botService.handlePhoto(ctx);
   }
 
+  @On('text')
+  async onText(ctx: Context): Promise<void> {
+    const message = (ctx as any).message;
+    if (!message?.text || message.text.startsWith('/')) return;
+    await this.botService.handleText(ctx);
+  }
+
   @Command('history')
   async onHistory(ctx: Context): Promise<void> {
     await this.botService.handleHistory(ctx);
